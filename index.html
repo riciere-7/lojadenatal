@@ -1,0 +1,1358 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Materiais de Natal para Imprimir e Economizar | Natal Mágico 2026</title>
+  <meta name="description" content="Cartões de Natal elegantes para imprimir e guia prático para economizar no Natal. Pagamento rápido via PIX e entrega automática no seu email.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --xmas-red: #c41e3a;
+      --xmas-red-dark: #8b0000;
+      --xmas-red-glow: #e63946;
+      --pine-green: #1b4332;
+      --pine-green-light: #2d6a4f;
+      --pine-green-accent: #40916c;
+      --gold: #d4af37;
+      --gold-light: #fef08a;
+      --gold-dark: #b8860b;
+      --cream: #fdfbf7;
+      --cream-warm: #f7f2e7;
+      --card-bg: #ffffff;
+      --ink: #1f2937;
+      --muted: #4b5563;
+      --line: #e5dccb;
+      --error: #b91c1c;
+      --shadow-sm: 0 4px 12px rgba(139, 0, 0, 0.06);
+      --shadow-lg: 0 16px 36px rgba(139, 0, 0, 0.12);
+      --shadow-festive: 0 12px 30px rgba(196, 30, 58, 0.22);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background-color: var(--cream);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Canvas de Neve Festiva Interativa */
+    #snow-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    /* Barra Superior com Contagem Regressiva */
+    .top-bar {
+      background: linear-gradient(90deg, var(--pine-green-light), var(--pine-green));
+      color: #fff;
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 2px solid var(--gold);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .top-bar .countdown {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-weight: 700;
+      color: var(--gold-light);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+    }
+    .snow-toggle {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: all 0.2s ease;
+    }
+    .snow-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Hero Section Natalino */
+    .hero {
+      background: radial-gradient(circle at 50% 20%, #a81c32 0%, var(--xmas-red) 45%, var(--xmas-red-dark) 100%);
+      color: #fff;
+      text-align: center;
+      padding: 64px 20px 96px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: radial-gradient(circle at 10% 30%, rgba(254, 240, 138, 0.15) 0%, transparent 20%),
+                        radial-gradient(circle at 90% 40%, rgba(254, 240, 138, 0.12) 0%, transparent 25%);
+      pointer-events: none;
+    }
+    .hero-garland {
+      font-size: 26px;
+      letter-spacing: 14px;
+      margin-bottom: 14px;
+      opacity: 0.9;
+      user-select: none;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 99px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: clamp(32px, 5.5vw, 54px);
+      font-weight: 900;
+      margin: 0 auto 18px;
+      line-height: 1.15;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+      max-width: 860px;
+    }
+    h1 span.highlight {
+      color: var(--gold-light);
+      text-shadow: 0 0 20px rgba(254, 240, 138, 0.6);
+    }
+    .hero p {
+      color: #ffe4e6;
+      font-size: clamp(16px, 2.4vw, 20px);
+      max-width: 680px;
+      margin: 0 auto 28px;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+    .hero-features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .hero-pill {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      padding: 8px 18px;
+      border-radius: 99px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Container Principal */
+    main {
+      max-width: 1100px;
+      margin: -60px auto 0;
+      padding: 0 20px 80px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Grade de Produtos */
+    .grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      margin-bottom: 50px;
+    }
+    
+    .card {
+      background: var(--card-bg);
+      border: 2px solid var(--line);
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--gold);
+    }
+    .card.selected {
+      border-color: var(--xmas-red);
+      background: #fffdfd;
+      box-shadow: var(--shadow-festive);
+      transform: translateY(-4px);
+    }
+    .card.selected::after {
+      content: "✓ SELECIONADO";
+      position: absolute;
+      top: -13px;
+      right: 24px;
+      background: var(--xmas-red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 4px 14px;
+      border-radius: 99px;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 10px rgba(196, 30, 58, 0.35);
+    }
+    
+    .card.popular {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, #fffcf4 0%, #ffffff 100%);
+    }
+    .card.popular:hover {
+      border-color: var(--gold-dark);
+    }
+    
+    .badge {
+      align-self: flex-start;
+      background: var(--pine-green);
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 99px;
+      margin-bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge.gold {
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      color: #1f2937;
+      font-weight: 800;
+    }
+    .badge.red {
+      background: var(--xmas-red);
+    }
+
+    .card h2 {
+      font-family: 'Cinzel', Georgia, serif;
+      color: var(--xmas-red-dark);
+      font-size: 23px;
+      font-weight: 700;
+      margin: 0 0 12px;
+      line-height: 1.3;
+    }
+    .card-desc {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    .card ul {
+      padding-left: 0;
+      margin: 0 0 24px;
+      list-style: none;
+      font-size: 14.5px;
+      color: #374151;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.45;
+    }
+    .card li::before {
+      content: "🎄";
+      font-size: 13px;
+      line-height: 1.3;
+      flex-shrink: 0;
+    }
+    .card.popular li::before {
+      content: "⭐";
+    }
+
+    .card-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px dashed var(--line);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .price-box {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .price {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--xmas-red);
+    }
+    .price-cents {
+      font-size: 18px;
+    }
+    .price small {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 500;
+    }
+    .card-btn {
+      width: 100%;
+      background: var(--cream-warm);
+      border: 2px solid var(--line);
+      color: var(--ink);
+      font-size: 14.5px;
+      font-weight: 700;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .card:hover .card-btn,
+    .card.selected .card-btn {
+      background: var(--xmas-red);
+      color: #fff;
+      border-color: var(--xmas-red);
+      box-shadow: 0 4px 12px rgba(196, 30, 58, 0.25);
+    }
+    .card.popular:hover .card-btn,
+    .card.popular.selected .card-btn {
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      color: #0f172a;
+      border-color: var(--gold);
+    }
+
+    /* Seção Interativa: Demonstração e Calculadora de Economia */
+    .interactive-section {
+      background: #ffffff;
+      border: 2px solid var(--border-gold, #fde68a);
+      border-radius: 24px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 50px;
+      position: relative;
+      overflow: hidden;
+    }
+    .interactive-section::before {
+      content: "🎁";
+      position: absolute;
+      top: -15px;
+      right: 20px;
+      font-size: 70px;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+    .section-title {
+      font-family: 'Cinzel', Georgia, serif;
+      color: var(--xmas-red-dark);
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 26px;
+    }
+
+    /* Abas de Pré-visualização */
+    .preview-tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid var(--line);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 10px 18px;
+      cursor: pointer;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      position: relative;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--xmas-red);
+      background: rgba(196, 30, 58, 0.05);
+    }
+    .tab-btn.active {
+      color: var(--xmas-red);
+      background: #fff5f5;
+    }
+    .tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--xmas-red);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .preview-item {
+      background: var(--cream);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .preview-item:hover {
+      transform: scale(1.03);
+      border-color: var(--gold);
+    }
+    .preview-item-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    .preview-item h4 {
+      font-size: 15px;
+      color: var(--xmas-red-dark);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .preview-item p {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* Calculadora de Economia Interativa */
+    .calculator-box {
+      margin-top: 32px;
+      padding: 24px;
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border: 2px dashed var(--pine-green-accent);
+      border-radius: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+    @media (max-width: 720px) {
+      .calculator-box { grid-template-columns: 1fr; }
+    }
+    .calc-slider-group label {
+      display: block;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--pine-dark);
+      margin-bottom: 8px;
+    }
+    .calc-slider {
+      width: 100%;
+      height: 8px;
+      border-radius: 5px;
+      background: #bbf7d0;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .calc-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--pine-green);
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .calc-values {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--pine-green-light);
+      margin-top: 6px;
+      font-weight: 600;
+    }
+    .calc-result {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #86efac;
+      box-shadow: 0 4px 12px rgba(22, 101, 52, 0.08);
+    }
+    .calc-result-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .calc-result-value {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--pine-green);
+      margin: 4px 0;
+    }
+    .calc-result-note {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Seção de Compra / Formulário PIX */
+    .buy-section {
+      background: #ffffff;
+      border: 2px solid var(--gold);
+      border-radius: 24px;
+      padding: 40px 32px;
+      max-width: 680px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    .buy-section::after {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 6px;
+      background: linear-gradient(90deg, var(--gold), var(--xmas-red), var(--gold));
+      border-radius: 99px;
+    }
+    .buy-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .buy-header h3 {
+      font-family: 'Cinzel', Georgia, serif;
+      color: var(--xmas-red-dark);
+      font-size: 27px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .buy-header p {
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+
+    /* Caixa de Resumo do Pedido Atual */
+    .order-summary-box {
+      background: #fdf8ed;
+      border: 1px solid var(--border-gold, #fde68a);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .order-summary-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .order-summary-icon {
+      font-size: 28px;
+    }
+    .order-summary-name {
+      font-weight: 700;
+      color: var(--xmas-red-dark);
+      font-size: 15px;
+    }
+    .order-summary-instant {
+      font-size: 12px;
+      color: var(--pine-green);
+      font-weight: 600;
+    }
+    .order-summary-price {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--xmas-red);
+      white-space: nowrap;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      justify-content: space-between;
+    }
+    .select-wrap, .input-wrap {
+      position: relative;
+    }
+    select, input[type="email"] {
+      width: 100%;
+      font-family: inherit;
+      font-size: 15.5px;
+      padding: 14px 16px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--ink);
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    select:focus, input[type="email"]:focus {
+      border-color: var(--xmas-red);
+      box-shadow: 0 0 0 4px rgba(196, 30, 58, 0.12);
+    }
+    
+    .submit-btn {
+      width: 100%;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 800;
+      padding: 16px 24px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--xmas-red) 0%, var(--xmas-red-dark) 100%);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(196, 30, 58, 0.35);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 6px;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(196, 30, 58, 0.45);
+      background: linear-gradient(135deg, #d32f2f 0%, var(--xmas-red) 100%);
+    }
+    .submit-btn:active {
+      transform: translateY(1px);
+    }
+    .submit-btn:disabled {
+      opacity: 0.65;
+      cursor: wait;
+      transform: none;
+    }
+
+    .error {
+      color: var(--error);
+      font-size: 13.5px;
+      font-weight: 600;
+      min-height: 20px;
+      text-align: center;
+    }
+
+    .trust-badges {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* FAQ Interativo (Accordion) */
+    .faq-section {
+      max-width: 780px;
+      margin: 60px auto 0;
+    }
+    .faq-title {
+      font-family: 'Cinzel', Georgia, serif;
+      text-align: center;
+      color: var(--xmas-red-dark);
+      font-size: 26px;
+      margin-bottom: 24px;
+    }
+    .faq-item {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+    .faq-item:hover {
+      border-color: var(--gold);
+    }
+    .faq-question {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 18px 20px;
+      font-family: inherit;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+    }
+    .faq-icon {
+      font-size: 18px;
+      transition: transform 0.25s ease;
+      color: var(--xmas-red);
+    }
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+    }
+    .faq-answer {
+      display: none;
+      padding: 0 20px 20px;
+      font-size: 14.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13.5px;
+      padding: 30px 20px 50px;
+      background: #f7f2e7;
+      border-top: 1px solid var(--line);
+      margin-top: 60px;
+    }
+    footer p { margin-bottom: 6px; }
+
+    /* Responsividade */
+    @media (max-width: 640px) {
+      .hero { padding: 48px 16px 80px; }
+      .hero-features { display: none; }
+      .interactive-section { padding: 24px 18px; }
+      .buy-section { padding: 28px 20px; }
+      .card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Canvas de Neve Festiva -->
+  <canvas id="snow-canvas"></canvas>
+
+  <!-- Barra Superior com Contagem Regressiva para o Natal -->
+  <aside class="top-bar" aria-label="Aviso festivo">
+    <span>🎅 <strong>Preparação de Natal 2026:</strong></span>
+    <span class="countdown" id="xmas-countdown">Calculando dias...</span>
+    <span>• Acesso instantâneo via PIX</span>
+    <button class="snow-toggle" id="toggle-snow" title="Ativar ou pausar a neve">❄️ Neve: <span id="snow-status">On</span></button>
+  </aside>
+
+  <!-- Hero Header Festivo -->
+  <header class="hero">
+    <div class="hero-garland">✨ 🎄 🎁 🔔 ⛄ ✨</div>
+    <div class="eyebrow">Edição Natal 2026</div>
+    <h1>Cartões e Guia para um Natal <br><span class="highlight">Mágico sem Estourar o Orçamento</span></h1>
+    <p>Modelos encantadores prontos para imprimir e um método comprovado para presentear com amor e economizar centenas de reais.</p>
+    <div class="hero-features">
+      <span class="hero-pill">⚡ Entrega automática por email</span>
+      <span class="hero-pill">🖨️ Arquivos em PDF de alta qualidade</span>
+      <span class="hero-pill">🔒 Pagamento via PIX seguro pela PinPay</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Grade dos 3 Produtos com Seleção Interativa -->
+    <section class="grid" aria-label="Catálogo de produtos">
+      
+      <!-- Cartões de Natal -->
+      <article class="card" data-product-id="cartoes" tabindex="0">
+        <span class="badge red">🎨 Imprimível</span>
+        <h2>Cartões de Natal (10 modelos)</h2>
+        <p class="card-desc">Artes exclusivas em alta resolução para imprimir em casa ou na gráfica rápida.</p>
+        <ul>
+          <li>10 modelos temáticos elegantes prontos em A4</li>
+          <li>Frente, verso e interior com espaço para dedicatória</li>
+          <li>Formato PDF vetorial, pronto para dobrar e encantar</li>
+          <li>Economize até R$ 80 comprando menos cartões prontos</li>
+        </ul>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price">R$ 9<span class="price-cents">,90</span></span>
+            <small>pagamento único via PIX</small>
+          </div>
+          <button type="button" class="card-btn">Escolher Cartões <span>👉</span></button>
+        </div>
+      </article>
+
+      <!-- Guia de Economia -->
+      <article class="card" data-product-id="guia" tabindex="0">
+        <span class="badge">📖 Guia Prático</span>
+        <h2>Como economizar no Natal</h2>
+        <p class="card-desc">O plano estratégico para presentear bem, ceia farta e zero dívidas em janeiro.</p>
+        <ul>
+          <li>Passo a passo em 8 etapas fáceis de aplicar</li>
+          <li>Exemplo prático de orçamento e checklist de presentes</li>
+          <li>Planilha e lista de compras para preencher e imprimir</li>
+          <li>Dicas secretas para ceia econômica sem perder o sabor</li>
+        </ul>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price">R$ 9<span class="price-cents">,90</span></span>
+            <small>pagamento único via PIX</small>
+          </div>
+          <button type="button" class="card-btn">Escolher o Guia <span>👉</span></button>
+        </div>
+      </article>
+
+      <!-- Kit Completo (Mais Escolhido) -->
+      <article class="card popular selected" data-product-id="combo" tabindex="0">
+        <span class="badge gold">⭐ Mais Escolhido</span>
+        <h2>Kit Natal Completo</h2>
+        <p class="card-desc">O pacote definitivo: todos os cartões + o guia de economia em uma pasta única.</p>
+        <ul>
+          <li><strong>Todos os 10 modelos</strong> de cartão para toda a família</li>
+          <li><strong>O Guia Completo</strong> de economia com planilhas</li>
+          <li>Acesso direto à pasta completa no Google Drive</li>
+          <li>Economia imediata de R$ 2,90 em relação a comprar separado</li>
+        </ul>
+        <div class="card-footer">
+          <div class="price-box">
+            <span class="price">R$ 16<span class="price-cents">,90</span></span>
+            <small>melhor custo-benefício</small>
+          </div>
+          <button type="button" class="card-btn">Escolher Kit Completo <span>⭐</span></button>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Seção Interativa: Preview dos Materiais e Simulador de Economia -->
+    <section class="interactive-section">
+      <h3 class="section-title">✨ Veja o que você vai receber</h3>
+      <p class="section-subtitle">Navegue pelas abas abaixo e explore uma prévia dos conteúdos preparados com carinho:</p>
+
+      <!-- Abas de Conteúdo -->
+      <div class="preview-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="cards-preview">🎨 Modelos de Cartões</button>
+        <button class="tab-btn" data-tab="guide-preview">📖 Capítulos do Guia</button>
+        <button class="tab-btn" data-tab="kit-preview">🎁 Vantagens do Combo</button>
+      </div>
+
+      <!-- Conteúdo Aba 1: Cartões -->
+      <div class="tab-content active" id="cards-preview">
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-item-icon">🌲</div>
+            <h4>Pinheiro Minimalista</h4>
+            <p>Design moderno em verde esmeralda com toques dourados e mensagem de paz.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">🎅</div>
+            <h4>Noite Feliz Tradicional</h4>
+            <p>Ilustração afetiva no estilo clássico natalino para avós, pais e amigos queridos.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">⭐</div>
+            <h4>Estrela de Belém</h4>
+            <p>Arte delicada com fundo creme e espaço generoso para mensagens manuscritas.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">🎀</div>
+            <h4>Guirlanda e Laço Nobre</h4>
+            <p>Visual botânico com azevinhos e caligrafia sofisticada para ocasiões especiais.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo Aba 2: Guia -->
+      <div class="tab-content" id="guide-preview">
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-item-icon">📝</div>
+            <h4>Regra dos 4 Presentes</h4>
+            <p>Como presentear quem você ama com significado sem gastar por impulso.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">🍽️</div>
+            <h4>Ceia Sem Desperdício</h4>
+            <p>Quantidades exatas por pessoa para evitar sobras excessivas e custos altos.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">📊</div>
+            <h4>Planilha de Gastos</h4>
+            <p>Tabela prática para preencher no celular ou imprimir e controlar o teto orçamentário.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">💡</div>
+            <h4>Lembrancinhas Criativas</h4>
+            <p>Ideias de mimos feitos em casa com os próprios cartões que tocam o coração.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo Aba 3: Combo -->
+      <div class="tab-content" id="kit-preview">
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-item-icon">📁</div>
+            <h4>Pasta Única no Drive</h4>
+            <p>Todos os PDFs organizados em pastas com acesso vitalício e leitura imediata.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">💰</div>
+            <h4>Máxima Economia</h4>
+            <p>Leve os cartões e o guia com desconto especial no pagamento único.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">🖨️</div>
+            <h4>Imprima Quantas Vezes Quiser</h4>
+            <p>Os arquivos são seus: imprima 10, 20 ou 50 cartões para todos os amigos.</p>
+          </div>
+          <div class="preview-item">
+            <div class="preview-item-icon">🎁</div>
+            <h4>Pronto para o Natal</h4>
+            <p>Tudo pronto para você resolver a papelaria e o planejamento natalino hoje mesmo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulador Interativo de Economia -->
+      <div class="calculator-box">
+        <div class="calc-slider-group">
+          <label for="spending-slider">
+            💸 Quanto você pretende gastar no Natal?
+            <span id="slider-display" style="color: var(--pine-green); font-size: 16px;">R$ 800</span>
+          </label>
+          <input type="range" id="spending-slider" class="calc-slider" min="300" max="4000" step="50" value="800">
+          <div class="calc-values">
+            <span>R$ 300</span>
+            <span>R$ 2.000</span>
+            <span>R$ 4.000</span>
+          </div>
+        </div>
+        <div class="calc-result">
+          <span class="calc-result-title">Sua economia média estimada</span>
+          <div class="calc-result-value" id="calc-savings">R$ 160,00</div>
+          <p class="calc-result-note">Aplicando as estratégias do guia e imprimindo seus próprios cartões!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção de Compra / Formulário PIX -->
+    <section class="buy-section" id="comprar">
+      <div class="buy-header">
+        <h3>Receba Seus Materiais Agora</h3>
+        <p>Preencha seu email abaixo para gerar o PIX seguro pela PinPay e receber o link no mesmo instante.</p>
+      </div>
+
+      <!-- Resumo visual do item selecionado -->
+      <div class="order-summary-box" id="order-summary">
+        <div class="order-summary-left">
+          <span class="order-summary-icon" id="summary-icon">⭐</span>
+          <div>
+            <div class="order-summary-name" id="summary-title">Kit Natal completo (cartões + guia)</div>
+            <div class="order-summary-instant">⚡ Entrega automática na sua caixa de entrada</div>
+          </div>
+        </div>
+        <div class="order-summary-price" id="summary-price">R$ 16,90</div>
+      </div>
+
+      <form id="checkout-form" novalidate>
+        <div class="form-group">
+          <label for="product">Produto escolhido</label>
+          <div class="select-wrap">
+            <select id="product" name="product_id" required>
+              <option value="cartoes">Cartões de Natal (R$ 9,90)</option>
+              <option value="guia">Guia para economizar (R$ 9,90)</option>
+              <option value="combo" selected>Kit completo (R$ 16,90)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Seu melhor email <span style="font-weight: normal; color: var(--muted); font-size: 12px;">(para onde enviaremos os links)</span></label>
+          <div class="input-wrap">
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="exemplo@gmail.com" required>
+          </div>
+        </div>
+
+        <p class="error" id="error" role="alert"></p>
+
+        <button type="submit" id="submit" class="submit-btn">
+          <span>Ir para o pagamento seguro</span>
+          <span>⚡</span>
+        </button>
+      </form>
+
+      <div class="trust-badges">
+        <span class="trust-item">🔒 Pagamento via PIX PinPay</span>
+        <span class="trust-item">⚡ Envio imediato</span>
+        <span class="trust-item">📁 Acesso vitalício</span>
+      </div>
+    </section>
+
+    <!-- FAQ Interativo -->
+    <section class="faq-section">
+      <h3 class="faq-title">Dúvidas Frequentes</h3>
+      
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>Como e quando recebo os materiais?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          A entrega é 100% automatizada. Assim que o PIX for compensado (normalmente em menos de 1 minuto), nosso sistema envia um email com o link exclusivo da pasta do Google Drive com todos os seus arquivos em PDF prontos para download.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>Qual o tipo de papel recomendado para imprimir os cartões?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Você pode imprimir em papel sulfite A4 comum na impressora de casa, mas para um resultado premium de papelaria fina recomendamos papel Opaline, Coupé, Kraft ou Fotográfico fosco com gramatura de 180g a 240g.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>O link do Google Drive tem prazo de validade?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Não! Seu acesso é permanente. Você pode baixar os arquivos para o seu computador ou celular ou deixá-los salvos para imprimir novamente em outros anos.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          <span>O pagamento via PIX é seguro?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          Sim, 100% seguro. O pagamento é processado diretamente pela PinPay com criptografia bancária. Não armazenamos nenhum dado de pagamento.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>🎄 <strong>Loja de Materiais de Natal 2026</strong> — Feito com carinho para celebrar em família.</p>
+    <p>Dúvidas? Responda o email de confirmação que você receberá após a compra.</p>
+  </footer>
+
+  <script>
+    // 1. Contagem Regressiva para o Natal
+    function updateCountdown() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      let xmas = new Date(currentYear, 11, 25);
+      if (now.getMonth() === 11 && now.getDate() > 25) {
+        xmas = new Date(currentYear + 1, 11, 25);
+      }
+      const diffTime = xmas - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const countdownEl = document.getElementById("xmas-countdown");
+      if (diffDays === 0) {
+        countdownEl.textContent = "É hoje! Feliz Natal! 🎅";
+      } else if (diffDays === 1) {
+        countdownEl.textContent = "É amanhã! 🎄";
+      } else {
+        countdownEl.textContent = `Faltam ${diffDays} dias para o Natal 🎄`;
+      }
+    }
+    updateCountdown();
+
+    // 2. Neve Festiva Interativa em Canvas
+    const canvas = document.getElementById("snow-canvas");
+    const ctx = canvas.getContext("2d");
+    let snowActive = true;
+    let flakes = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function initFlakes() {
+      flakes = [];
+      const count = Math.min(window.innerWidth / 16, 65);
+      for (let i = 0; i < count; i++) {
+        flakes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 2.5 + 1,
+          density: Math.random() * 1 + 0.5,
+          opacity: Math.random() * 0.7 + 0.3
+        });
+      }
+    }
+    initFlakes();
+
+    function drawSnow() {
+      if (!snowActive) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+      ctx.beginPath();
+      for (let i = 0; i < flakes.length; i++) {
+        const f = flakes[i];
+        ctx.moveTo(f.x, f.y);
+        ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2, true);
+      }
+      ctx.fill();
+
+      for (let i = 0; i < flakes.length; i++) {
+        const f = flakes[i];
+        f.y += Math.cos(f.density) + 1 + f.radius / 2;
+        f.x += Math.sin(f.density);
+        if (f.y > canvas.height) {
+          flakes[i] = {
+            x: Math.random() * canvas.width,
+            y: 0,
+            radius: f.radius,
+            density: f.density,
+            opacity: f.opacity
+          };
+        }
+      }
+      requestAnimationFrame(drawSnow);
+    }
+    requestAnimationFrame(drawSnow);
+
+    document.getElementById("toggle-snow").addEventListener("click", () => {
+      snowActive = !snowActive;
+      document.getElementById("snow-status").textContent = snowActive ? "On" : "Off";
+      if (snowActive) {
+        requestAnimationFrame(drawSnow);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    });
+
+    // 3. Sincronização Interativa dos Cards com o Formulário
+    const productSelect = document.getElementById("product");
+    const cards = document.querySelectorAll(".card[data-product-id]");
+    const summaryTitle = document.getElementById("summary-title");
+    const summaryPrice = document.getElementById("summary-price");
+    const summaryIcon = document.getElementById("summary-icon");
+
+    const productDetails = {
+      cartoes: {
+        title: "Cartões de Natal (10 modelos)",
+        price: "R$ 9,90",
+        icon: "🎨"
+      },
+      guia: {
+        title: "Guia: Como economizar no Natal",
+        price: "R$ 9,90",
+        icon: "📖"
+      },
+      combo: {
+        title: "Kit Natal completo (cartões + guia)",
+        price: "R$ 16,90",
+        icon: "⭐"
+      }
+    };
+
+    function selectProduct(id, scroll = false) {
+      cards.forEach(card => {
+        if (card.dataset.productId === id) {
+          card.classList.add("selected");
+        } else {
+          card.classList.remove("selected");
+        }
+      });
+      productSelect.value = id;
+      
+      const item = productDetails[id];
+      if (item) {
+        summaryTitle.textContent = item.title;
+        summaryPrice.textContent = item.price;
+        summaryIcon.textContent = item.icon;
+      }
+
+      if (scroll) {
+        const buySection = document.getElementById("comprar");
+        buySection.scrollIntoView({ behavior: "smooth", block: "center" });
+        const emailInput = document.getElementById("email");
+        setTimeout(() => emailInput.focus(), 600);
+      }
+    }
+
+    cards.forEach(card => {
+      card.addEventListener("click", () => {
+        const id = card.dataset.productId;
+        selectProduct(id, true);
+      });
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectProduct(card.dataset.productId, true);
+        }
+      });
+    });
+
+    productSelect.addEventListener("change", () => {
+      selectProduct(productSelect.value, false);
+    });
+
+    // 4. Abas Interativas de Prévia
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabButtons.forEach(b => b.classList.remove("active"));
+        tabContents.forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        const targetId = btn.dataset.tab;
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) targetEl.classList.add("active");
+      });
+    });
+
+    // 5. Calculadora de Economia Interativa
+    const slider = document.getElementById("spending-slider");
+    const sliderDisplay = document.getElementById("slider-display");
+    const calcSavings = document.getElementById("calc-savings");
+
+    slider.addEventListener("input", (e) => {
+      const val = Number(e.target.value);
+      sliderDisplay.textContent = `R$ ${val.toLocaleString("pt-BR")}`;
+      // Estimativa média de economia de 20% com planejamento + cartões
+      const savings = Math.round(val * 0.20);
+      calcSavings.textContent = `R$ ${savings.toLocaleString("pt-BR")},00`;
+    });
+
+    // 6. FAQ Acordeão Interativo
+    const faqItems = document.querySelectorAll(".faq-item");
+    faqItems.forEach(item => {
+      const btn = item.querySelector(".faq-question");
+      btn.addEventListener("click", () => {
+        const isOpen = item.classList.contains("open");
+        faqItems.forEach(i => i.classList.remove("open"));
+        if (!isOpen) {
+          item.classList.add("open");
+        }
+      });
+    });
+
+    // 7. Envio do Formulário de Checkout
+    const form = document.getElementById("checkout-form");
+    const errorEl = document.getElementById("error");
+    const button = document.getElementById("submit");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      errorEl.textContent = "";
+      const email = document.getElementById("email").value.trim();
+      const productId = productSelect.value;
+
+      if (!email) {
+        errorEl.textContent = "Por favor, informe seu email para receber os arquivos.";
+        document.getElementById("email").focus();
+        return;
+      }
+
+      button.disabled = true;
+      button.innerHTML = "<span>Gerando chave PIX segura...</span> <span>⏳</span>";
+      try {
+        const res = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, product_id: productId }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.checkout_url) {
+          throw new Error(data.error || "Não foi possível iniciar o pagamento.");
+        }
+        window.location.href = data.checkout_url;
+      } catch (err) {
+        errorEl.textContent = err.message;
+        button.disabled = false;
+        button.innerHTML = "<span>Ir para o pagamento seguro</span> <span>⚡</span>";
+      }
+    });
+  </script>
+</body>
+</html>
