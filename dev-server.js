@@ -126,7 +126,7 @@ const server = http.createServer(async (req, res) => {
     let webResponse;
     if (pathname === "/api/checkout" && req.method === "POST") {
       webResponse = await checkoutHandler({ request: webRequest, env });
-    } else if (pathname === "/api/webhook" && req.method === "POST") {
+    } else if ((pathname === "/api/webhook" || pathname === "/api/webhook/pinpay") && req.method === "POST") {
       webResponse = await webhookHandler({ request: webRequest, env });
     } else {
       res.writeHead(404, { "Content-Type": "application/json" });
