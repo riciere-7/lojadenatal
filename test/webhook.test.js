@@ -308,6 +308,45 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     assert.match(data.error, /PINPAY_SECRET_KEY/);
   });
 
+  test("5c. Checkout normaliza usepinpay.com/link/ para hub.usepinpay.com/link/", async () => {
+    // Sobrescreve o mock temporariamente para retornar usepinpay.com sem hub
+    const oldFetch = globalThis.fetch;
+    globalThis.fetch = async (url, options = {}) => {
+      if (String(url).includes("api.usepinpay.com")) {
+        return new Response(
+          JSON.stringify({
+            checkout_url: "https://usepinpay.com/link/635247cf-42da-4fbe-8e65-e80aed6d0c9d",
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      return oldFetch(url, options);
+    };
+
+    try {
+      const request = new Request("https://site.pages.dev/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Cliente Teste",
+          email: "normaliza@natal.com",
+          phone: "11999998888",
+          product_id: "cartoes",
+        }),
+      });
+
+      const res = await checkoutHandler({ request, env });
+      assert.equal(res.status, 200);
+      const data = await res.json();
+      assert.equal(
+        data.checkout_url,
+        "https://hub.usepinpay.com/link/635247cf-42da-4fbe-8e65-e80aed6d0c9d"
+      );
+    } finally {
+      globalThis.fetch = oldFetch;
+    }
+  });
+
   test("6. Dados do pedido vindos no payload da PinPay funcionam caso KV esteja vazio", async () => {
     const ref = "NATAL-direto-1";
     // Sem gravar em mockKV previamente

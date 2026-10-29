@@ -1380,13 +1380,21 @@
           throw new Error(data.error || "Não foi possível iniciar o pagamento na PinPay.");
         }
 
+        let checkoutUrl = data.checkout_url;
+        // Normalização preventiva: garante redirecionamento para o subdomínio hub da PinPay
+        if (checkoutUrl && checkoutUrl.includes("usepinpay.com/link/") && !checkoutUrl.includes("hub.usepinpay.com")) {
+          checkoutUrl = checkoutUrl
+            .replace("https://usepinpay.com/link/", "https://hub.usepinpay.com/link/")
+            .replace("http://usepinpay.com/link/", "https://hub.usepinpay.com/link/");
+        }
+
         button.innerHTML = "<span>Redirecionando para o PIX...</span> <span>🚀</span>";
         // Redireciona para o checkout oficial da PinPay onde o QR Code e PIX Copia e Cola são gerados
-        window.location.href = data.checkout_url;
+        window.location.href = checkoutUrl;
 
         // Fallback visual caso o navegador bloqueie o redirecionamento
         setTimeout(() => {
-          errorEl.innerHTML = `<span style="color: var(--pine-green); font-weight: bold;">✓ PIX gerado! <a href="${data.checkout_url}" target="_blank" style="color: var(--xmas-red); text-decoration: underline;">Clique aqui para abrir seu pagamento PinPay</a></span>`;
+          errorEl.innerHTML = `<span style="color: var(--pine-green); font-weight: bold;">✓ PIX gerado! <a href="${checkoutUrl}" target="_blank" style="color: var(--xmas-red); text-decoration: underline;">Clique aqui para abrir seu pagamento PinPay</a></span>`;
         }, 1200);
       } catch (err) {
         errorEl.textContent = err.message;

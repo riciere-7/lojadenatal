@@ -103,5 +103,16 @@ export async function onRequestPost({ request, env }) {
     }
   }
 
-  return json({ checkout_url: checkout.checkout_url });
+  let checkoutUrl = checkout.checkout_url || checkout.url;
+  // A API da PinPay retorna 'https://usepinpay.com/link/<uuid>' (sem o subdomínio hub),
+  // porém o domínio institucional 'usepinpay.com' exibe a página institucional de marketing.
+  // A aplicação web de checkout oficial da PinPay (com QR Code Pix, formulário e PIX Copia e Cola)
+  // é hospedada exclusivamente no subdomínio 'https://hub.usepinpay.com/link/<uuid>'.
+  if (checkoutUrl && checkoutUrl.includes("usepinpay.com/link/") && !checkoutUrl.includes("hub.usepinpay.com")) {
+    checkoutUrl = checkoutUrl
+      .replace("https://usepinpay.com/link/", "https://hub.usepinpay.com/link/")
+      .replace("http://usepinpay.com/link/", "https://hub.usepinpay.com/link/");
+  }
+
+  return json({ checkout_url: checkoutUrl });
 }
