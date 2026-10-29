@@ -87,3 +87,4 @@ export async function onRequestGet({ request, env }) {
 
   return json({ status: "pending", paid: false });
 }
+
