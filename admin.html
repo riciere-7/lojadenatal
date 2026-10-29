@@ -392,6 +392,7 @@
                 <th>Data</th>
                 <th>Referência</th>
                 <th>Cliente</th>
+                <th>WhatsApp</th>
                 <th>Produto</th>
                 <th>Valor</th>
                 <th>Status</th>
@@ -400,7 +401,7 @@
             </thead>
             <tbody id="orders-table-body">
               <tr>
-                <td colspan="7" class="empty-state">Carregando pedidos...</td>
+                <td colspan="8" class="empty-state">Carregando pedidos...</td>
               </tr>
             </tbody>
           </table>
@@ -569,10 +570,19 @@
       document.getElementById("metric-ticket-medio").textContent = `R$ ${ticket.replace(".", ",")}`;
     }
 
+    function formatPhone(num) {
+      if (!num) return "-";
+      const clean = String(num).replace(/\D/g, "");
+      if (clean.length === 11) {
+        return `(${clean.slice(0,2)}) ${clean.slice(2,7)}-${clean.slice(7)}`;
+      }
+      return clean;
+    }
+
     function renderOrders(orders) {
       const tbody = document.getElementById("orders-table-body");
       if (!orders || orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="empty-state">Nenhum pedido registrado ainda no KV ORDERS.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state">Nenhum pedido registrado ainda no KV ORDERS.</td></tr>`;
         return;
       }
 
@@ -581,21 +591,38 @@
         const valReais = o.amount ? `R$ ${(o.amount / 100).toFixed(2).replace(".", ",")}` : "-";
         const isDelivered = o.status === "delivered";
         const statusBadge = isDelivered 
-          ? `<span class="badge-status delivered">✓ Aprovado / Entregue</span>`
+          ? `<span class="badge-status delivered">✓ Aprovado</span>`
           : `<span class="badge-status pending">⏳ Aguardando PIX</span>`;
+
+        const cleanPhone = o.phone ? String(o.phone).replace(/\D/g, "") : "";
+        const waNumber = cleanPhone.length >= 10 ? (cleanPhone.startsWith("55") ? cleanPhone : "55" + cleanPhone) : "";
+        
+        const clientName = o.name ? o.name : "Cliente";
+        const prodName = o.product_name || o.product_id || "Materiais de Natal";
+        const waMsg = encodeURIComponent(`Olá ${clientName}! 🎄 Aqui é da Loja de Natal. Confirmamos seu pagamento do ${prodName}!\n\nSeus materiais estão liberados para download no Google Drive:\nCaso precise de ajuda com a impressão, estou à disposição!\n\nTenha um Natal maravilhoso e abençoado! 🎅✨`);
+        const waLink = waNumber ? `https://wa.me/${waNumber}?text=${waMsg}` : "";
 
         return `
           <tr>
             <td><small>${dateStr}</small></td>
             <td><strong style="font-family: monospace;">${o.external_reference || "-"}</strong></td>
-            <td>${o.email || "-"}</td>
-            <td>${o.product_name || o.product_id || "-"}</td>
+            <td>
+              <strong>${o.name || "Cliente"}</strong><br>
+              <small style="color: var(--muted);">${o.email || "-"}</small>
+            </td>
+            <td>
+              ${waNumber ? `<a href="${waLink}" target="_blank" style="color: #16a34a; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">📲 ${formatPhone(cleanPhone)}</a>` : '<span style="color: #94a3b8;">-</span>'}
+            </td>
+            <td>${prodName}</td>
             <td><strong>${valReais}</strong></td>
             <td>${statusBadge}</td>
             <td>
-              <button class="action-btn" onclick="resendDelivery('${o.external_reference}')" title="Reenviar link do produto por email">
-                ✉️ Reenviar
-              </button>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                ${waLink ? `<a href="${waLink}" target="_blank" class="action-btn" style="background: #f0fdf4; color: #166534; border-color: #86efac; text-decoration: none;" title="Entregar materiais via WhatsApp">📲 WhatsApp</a>` : ''}
+                <button class="action-btn" onclick="resendDelivery('${o.external_reference}')" title="Reenviar link do produto por email">
+                  ✉️ Email
+                </button>
+              </div>
             </td>
           </tr>
         `;
@@ -729,3 +756,4 @@
   </script>
 </body>
 </html>
+

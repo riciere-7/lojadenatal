@@ -657,7 +657,7 @@
     .select-wrap, .input-wrap {
       position: relative;
     }
-    select, input[type="email"] {
+    select, input[type="email"], input[type="text"], input[type="tel"] {
       width: 100%;
       font-family: inherit;
       font-size: 15.5px;
@@ -669,7 +669,7 @@
       transition: all 0.2s ease;
       outline: none;
     }
-    select:focus, input[type="email"]:focus {
+    select:focus, input[type="email"]:focus, input[type="text"]:focus, input[type="tel"]:focus {
       border-color: var(--xmas-red);
       box-shadow: 0 0 0 4px rgba(196, 30, 58, 0.12);
     }
@@ -1047,16 +1047,30 @@
         </div>
 
         <div class="form-group">
-          <label for="email">Seu melhor email <span style="font-weight: normal; color: var(--muted); font-size: 12px;">(para onde enviaremos os links)</span></label>
+          <label for="name">Seu Nome completo</label>
+          <div class="input-wrap">
+            <input id="name" name="name" type="text" autocomplete="name" placeholder="Ex: Maria Silva" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Seu melhor email <span style="font-weight: normal; color: var(--muted); font-size: 12px;">(para receber os arquivos)</span></label>
           <div class="input-wrap">
             <input id="email" name="email" type="email" autocomplete="email" placeholder="exemplo@gmail.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Seu WhatsApp com DDD <span style="font-weight: normal; color: var(--pine-green); font-size: 12px;">(para envio rápido dos links)</span></label>
+          <div class="input-wrap">
+            <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="(11) 99999-9999" required maxlength="15">
           </div>
         </div>
 
         <p class="error" id="error" role="alert"></p>
 
         <button type="submit" id="submit" class="submit-btn">
-          <span>Ir para o pagamento seguro</span>
+          <span>Ir para o pagamento seguro na PinPay</span>
           <span>⚡</span>
         </button>
       </form>
@@ -1317,7 +1331,14 @@
       });
     });
 
-    // 7. Envio do Formulário de Checkout
+    // 7. Máscara de Telefone / WhatsApp
+    const phoneInput = document.getElementById("phone");
+    phoneInput.addEventListener("input", (e) => {
+      let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+      e.target.value = !x[2] ? x[1] : `(${x[1]}) ${x[2]}` + (x[3] ? `-${x[3]}` : "");
+    });
+
+    // 8. Envio do Formulário de Checkout
     const form = document.getElementById("checkout-form");
     const errorEl = document.getElementById("error");
     const button = document.getElementById("submit");
@@ -1325,32 +1346,52 @@
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
       errorEl.textContent = "";
+      const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
       const productId = productSelect.value;
 
+      if (!name) {
+        errorEl.textContent = "Por favor, informe seu nome.";
+        document.getElementById("name").focus();
+        return;
+      }
       if (!email) {
         errorEl.textContent = "Por favor, informe seu email para receber os arquivos.";
         document.getElementById("email").focus();
         return;
       }
+      if (!phone || phone.replace(/\D/g, "").length < 10) {
+        errorEl.textContent = "Por favor, informe seu WhatsApp com DDD.";
+        document.getElementById("phone").focus();
+        return;
+      }
 
       button.disabled = true;
-      button.innerHTML = "<span>Gerando chave PIX segura...</span> <span>⏳</span>";
+      button.innerHTML = "<span>Gerando cobrança PIX na PinPay...</span> <span>⏳</span>";
       try {
         const res = await fetch("/api/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, product_id: productId }),
+          body: JSON.stringify({ name, email, phone, product_id: productId }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.checkout_url) {
-          throw new Error(data.error || "Não foi possível iniciar o pagamento.");
+          throw new Error(data.error || "Não foi possível iniciar o pagamento na PinPay.");
         }
+
+        button.innerHTML = "<span>Redirecionando para o PIX...</span> <span>🚀</span>";
+        // Redireciona para o checkout oficial da PinPay onde o QR Code e PIX Copia e Cola são gerados
         window.location.href = data.checkout_url;
+
+        // Fallback visual caso o navegador bloqueie o redirecionamento
+        setTimeout(() => {
+          errorEl.innerHTML = `<span style="color: var(--pine-green); font-weight: bold;">✓ PIX gerado! <a href="${data.checkout_url}" target="_blank" style="color: var(--xmas-red); text-decoration: underline;">Clique aqui para abrir seu pagamento PinPay</a></span>`;
+        }, 1200);
       } catch (err) {
         errorEl.textContent = err.message;
         button.disabled = false;
-        button.innerHTML = "<span>Ir para o pagamento seguro</span> <span>⚡</span>";
+        button.innerHTML = "<span>Ir para o pagamento seguro na PinPay</span> <span>⚡</span>";
       }
     });
   </script>

@@ -19,6 +19,8 @@ export async function onRequestPost({ request, env }) {
   }
 
   const email = String(data.email || "").trim().toLowerCase();
+  const name = String(data.name || "").trim();
+  const phone = String(data.phone || "").replace(/\D/g, ""); // Apenas dígitos do WhatsApp
   const product = PRODUCTS[data.product_id];
 
   if (!EMAIL_RE.test(email) || email.length > 120) {
@@ -32,12 +34,16 @@ export async function onRequestPost({ request, env }) {
   // Identificador do pedido na loja: volta no webhook para casar o pagamento.
   const externalReference = `NATAL-${crypto.randomUUID()}`;
 
+  const customerObj = { email };
+  if (name) customerObj.name = name;
+  if (phone) customerObj.phone = phone;
+
   const body = {
     amount: product.amount,
     external_reference: externalReference,
     description: product.name,
     methods: ["pix"],
-    customer: { email },
+    customer: customerObj,
     success_url: `${origin}/obrigado.html?ref=${externalReference}`,
   };
   // Sem webhook_url aqui: a confirmação chega pelo webhook da conta (ver README),
@@ -78,7 +84,9 @@ export async function onRequestPost({ request, env }) {
         `order:${externalReference}`,
         JSON.stringify({
           external_reference: externalReference,
+          name: name || undefined,
           email,
+          phone: phone || undefined,
           product_id: data.product_id,
           amount: product.amount,
           status: "pending",

@@ -329,3 +329,4 @@ export async function onRequestPost({ request, env }) {
 
   return json({ error: "Ação não reconhecida." }, 400);
 }
+

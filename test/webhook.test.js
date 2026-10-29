@@ -258,9 +258,11 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     assert.equal(resendCalls.length, 1, "Contador de emails permanece em 1 (sem duplicação).");
   });
 
-  test("5. Checkout grava pedido pendente em KV ORDERS", async () => {
+  test("5. Checkout grava pedido pendente em KV ORDERS com WhatsApp e Nome", async () => {
     const reqBody = {
+      name: "Maria Teste",
       email: "teste_checkout@exemplo.com",
+      phone: "(11) 98888-7777",
       product_id: "guia",
     };
 
@@ -278,12 +280,16 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     assert.equal(pinpayCalls.length, 1);
     const extRef = pinpayCalls[0].body.external_reference;
     assert.match(extRef, /^NATAL-[0-9a-f-]+$/i);
+    assert.equal(pinpayCalls[0].body.customer.phone, "11988887777");
+    assert.equal(pinpayCalls[0].body.customer.name, "Maria Teste");
 
     // Confere se o pedido pendente foi registrado no KV ORDERS
     const storedOrderRaw = await mockKV.get(`order:${extRef}`);
     assert.ok(storedOrderRaw, "Pedido deve existir no KV ORDERS.");
     const storedOrder = JSON.parse(storedOrderRaw);
     assert.equal(storedOrder.email, "teste_checkout@exemplo.com");
+    assert.equal(storedOrder.name, "Maria Teste");
+    assert.equal(storedOrder.phone, "11988887777");
     assert.equal(storedOrder.product_id, "guia");
     assert.equal(storedOrder.status, "pending");
   });
