@@ -166,6 +166,51 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     assert.equal(delivered, null, "Não deve marcar como entregue.");
   });
 
+  test("2b. Evento de teste disparado pelo painel da PinPay (test: true) responde 200", async () => {
+    const rawBody = JSON.stringify({
+      event: "payment_pending",
+      test: true,
+      transaction: {
+        id: "test-uuid-123",
+        amount: 9990,
+        status: "pending",
+        payment_method: "pix",
+      },
+    });
+
+    const request = new Request("https://site.pages.dev/api/webhook/pinpay", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: rawBody,
+    });
+
+    const res = await webhookHandler({ request, env });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.success, true);
+    assert.equal(data.test, true);
+  });
+
+  test("2c. Webhook sem PINPAY_WEBHOOK_SECRET no env responde 200 para testes da PinPay sem dar 500", async () => {
+    const envSemSecret = { ...env, PINPAY_WEBHOOK_SECRET: "" };
+    const rawBody = JSON.stringify({
+      event: "payment_pending",
+      test: true,
+      transaction: { id: "test-no-secret" },
+    });
+
+    const request = new Request("https://site.pages.dev/api/webhook/pinpay", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: rawBody,
+    });
+
+    const res = await webhookHandler({ request, env: envSemSecret });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.success, true);
+  });
+
   test("3. Evento payment_approved gera um único email e grava no KV", async () => {
     const ref = "NATAL-aprovado-1";
     // Simula pedido gravado no KV previamente pelo checkout
