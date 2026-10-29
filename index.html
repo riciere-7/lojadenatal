@@ -733,6 +733,189 @@
       gap: 6px;
     }
 
+    /* Tela de Pagamento PIX Inline */
+    .pix-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      text-align: center;
+      animation: fadeInPix 0.35s ease-out;
+      margin-top: 6px;
+    }
+    @keyframes fadeInPix {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pix-screen-header {
+      width: 100%;
+    }
+    .pix-success-badge {
+      display: inline-block;
+      background: #dcfce7;
+      color: var(--pine-dark);
+      font-weight: 800;
+      font-size: 13px;
+      padding: 6px 16px;
+      border-radius: 99px;
+      border: 1px solid #86efac;
+      margin-bottom: 10px;
+    }
+    .pix-screen-header h4 {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 23px;
+      font-weight: 800;
+      color: var(--xmas-red-dark);
+      margin-bottom: 6px;
+    }
+    .pix-screen-header p {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .pix-qr-container {
+      background: #ffffff;
+      border: 2px solid var(--border-gold, #fde68a);
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: 0 8px 24px rgba(185, 28, 28, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .pix-qr-img {
+      width: 240px;
+      height: 240px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      display: block;
+      object-fit: contain;
+    }
+    .pix-amount-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--pine-green);
+    }
+    .pix-timer-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .pix-timer-box strong {
+      color: var(--xmas-red);
+      font-family: monospace;
+      font-size: 15px;
+    }
+    .pix-copy-section {
+      width: 100%;
+      text-align: left;
+    }
+    .pix-copy-label {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .pix-copy-group {
+      display: flex;
+      gap: 8px;
+    }
+    @media (max-width: 580px) {
+      .pix-copy-group { flex-direction: column; }
+    }
+    .pix-copy-input {
+      flex: 1;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-family: monospace;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: #f9fafb;
+      color: #374151;
+      outline: none;
+    }
+    .btn-copy-pix {
+      padding: 12px 20px;
+      background: var(--pine-green);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-copy-pix:hover {
+      background: var(--pine-dark);
+      transform: translateY(-1px);
+    }
+    .btn-copy-pix.copied {
+      background: #15803d;
+    }
+    .pix-waiting-box {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 14px;
+      padding: 14px 18px;
+      text-align: left;
+    }
+    .pix-pulse-dot {
+      width: 14px;
+      height: 14px;
+      background: #eab308;
+      border-radius: 50%;
+      box-shadow: 0 0 0 rgba(234, 179, 8, 0.4);
+      animation: pixPulse 1.8s infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pixPulse {
+      0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(234, 179, 8, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); }
+    }
+    .pix-waiting-text strong {
+      font-size: 13.5px;
+      color: #854d0e;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .pix-waiting-text p {
+      font-size: 12px;
+      color: #a16207;
+      margin: 0;
+    }
+    .btn-back-form {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 6px;
+      margin-top: 4px;
+    }
+    .btn-back-form:hover {
+      color: var(--xmas-red);
+    }
+
     /* FAQ Interativo (Accordion) */
     .faq-section {
       max-width: 780px;
@@ -833,7 +1016,7 @@
     <div class="hero-features">
       <span class="hero-pill">⚡ Entrega automática por email</span>
       <span class="hero-pill">🖨️ Arquivos em PDF de alta qualidade</span>
-      <span class="hero-pill">🔒 Pagamento via PIX seguro pela PinPay</span>
+      <span class="hero-pill">🔒 Pagamento 100% Seguro via PIX</span>
     </div>
   </header>
 
@@ -1019,7 +1202,7 @@
     <section class="buy-section" id="comprar">
       <div class="buy-header">
         <h3>Receba Seus Materiais Agora</h3>
-        <p>Preencha seu email abaixo para gerar o PIX seguro pela PinPay e receber o link no mesmo instante.</p>
+        <p>Preencha seus dados abaixo para gerar seu PIX imediato e receber o acesso no mesmo instante.</p>
       </div>
 
       <!-- Resumo visual do item selecionado -->
@@ -1034,6 +1217,7 @@
         <div class="order-summary-price" id="summary-price">R$ 16,90</div>
       </div>
 
+      <!-- Formulário de Checkout Inline -->
       <form id="checkout-form" novalidate>
         <div class="form-group">
           <label for="product">Produto escolhido</label>
@@ -1067,16 +1251,64 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <label for="cpf">Seu CPF <span style="font-weight: normal; color: var(--muted); font-size: 12px;">(exigido pelo Banco Central para gerar o PIX)</span></label>
+          <div class="input-wrap">
+            <input id="cpf" name="cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" required maxlength="14">
+          </div>
+        </div>
+
         <p class="error" id="error" role="alert"></p>
 
         <button type="submit" id="submit" class="submit-btn">
-          <span>Ir para o pagamento seguro na PinPay</span>
+          <span>Gerar QR Code PIX e Liberar Arquivos</span>
           <span>⚡</span>
         </button>
       </form>
 
+      <!-- Tela de Pagamento PIX Inline Gerada na Mesma Tela -->
+      <div id="pix-display" class="pix-screen" style="display: none;">
+        <div class="pix-screen-header">
+          <div class="pix-success-badge">✨ PIX Gerado com Sucesso!</div>
+          <h4>Pague com PIX para Liberar o Download</h4>
+          <p>Abra o app do seu banco, escolha <strong>Pagar com PIX</strong> e aponte a câmera para o QR Code ou use o código Copia e Cola abaixo.</p>
+        </div>
+
+        <div class="pix-qr-container">
+          <div class="pix-amount-tag" id="pix-amount-tag">R$ 16,90</div>
+          <img id="pix-qr-img" class="pix-qr-img" src="" alt="QR Code PIX">
+          <div class="pix-timer-box">
+            <span>⏳ Tempo restante:</span>
+            <strong id="pix-timer">15:00</strong>
+          </div>
+        </div>
+
+        <div class="pix-copy-section">
+          <label class="pix-copy-label" for="pix-copy-input">Código PIX Copia e Cola:</label>
+          <div class="pix-copy-group">
+            <input type="text" id="pix-copy-input" class="pix-copy-input" readonly value="">
+            <button type="button" id="btn-copy-pix" class="btn-copy-pix">
+              <span id="btn-copy-icon">📋</span>
+              <span id="btn-copy-text">Copiar Código PIX</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pix-waiting-box">
+          <div class="pix-pulse-dot"></div>
+          <div class="pix-waiting-text">
+            <strong>Aguardando confirmação do pagamento...</strong>
+            <p>Assim que você pagar no app do banco, esta tela atualizará automaticamente!</p>
+          </div>
+        </div>
+
+        <button type="button" id="btn-back-form" class="btn-back-form">
+          ← Deseja alterar seus dados ou produto?
+        </button>
+      </div>
+
       <div class="trust-badges">
-        <span class="trust-item">🔒 Pagamento via PIX PinPay</span>
+        <span class="trust-item">🔒 Pagamento 100% Seguro via PIX</span>
         <span class="trust-item">⚡ Envio imediato</span>
         <span class="trust-item">📁 Acesso vitalício</span>
       </div>
@@ -1122,7 +1354,7 @@
           <span class="faq-icon">+</span>
         </button>
         <div class="faq-answer">
-          Sim, 100% seguro. O pagamento é processado diretamente pela PinPay com criptografia bancária. Não armazenamos nenhum dado de pagamento.
+          Sim, 100% seguro. O pagamento é processado diretamente via PIX com criptografia bancária do Banco Central e compensação instantânea em tempo real. Não armazenamos nenhum dado de pagamento.
         </div>
       </div>
     </section>
@@ -1331,14 +1563,86 @@
       });
     });
 
-    // 7. Máscara de Telefone / WhatsApp
+    // 7. Máscara de Telefone / WhatsApp e CPF
     const phoneInput = document.getElementById("phone");
     phoneInput.addEventListener("input", (e) => {
       let x = e.target.value.replace(/\D/g, "").match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
       e.target.value = !x[2] ? x[1] : `(${x[1]}) ${x[2]}` + (x[3] ? `-${x[3]}` : "");
     });
 
-    // 8. Envio do Formulário de Checkout
+    const cpfInput = document.getElementById("cpf");
+    cpfInput.addEventListener("input", (e) => {
+      let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+      if (v.length <= 3) e.target.value = v;
+      else if (v.length <= 6) e.target.value = `${v.slice(0, 3)}.${v.slice(3)}`;
+      else if (v.length <= 9) e.target.value = `${v.slice(0, 3)}.${v.slice(3, 6)}.${v.slice(6)}`;
+      else e.target.value = `${v.slice(0, 3)}.${v.slice(3, 6)}.${v.slice(6, 9)}-${v.slice(9)}`;
+    });
+
+    function isValidClientCPF(cpf) {
+      const clean = String(cpf || "").replace(/\D/g, "");
+      if (clean.length !== 11 || /^(\d)\1{10}$/.test(clean)) return false;
+      let sum = 0;
+      for (let i = 0; i < 9; i++) sum += parseInt(clean[i], 10) * (10 - i);
+      let rem = (sum * 10) % 11;
+      if (rem === 10 || rem === 11) rem = 0;
+      if (rem !== parseInt(clean[9], 10)) return false;
+      sum = 0;
+      for (let i = 0; i < 10; i++) sum += parseInt(clean[i], 10) * (11 - i);
+      rem = (sum * 10) % 11;
+      if (rem === 10 || rem === 11) rem = 0;
+      return rem === parseInt(clean[10], 10);
+    }
+
+    let pollInterval = null;
+    let timerInterval = null;
+
+    function stopPixMonitoring() {
+      if (pollInterval) clearInterval(pollInterval);
+      if (timerInterval) clearInterval(timerInterval);
+      pollInterval = null;
+      timerInterval = null;
+    }
+
+    // 8. Botão Voltar para Editar Formulário
+    const pixDisplay = document.getElementById("pix-display");
+    const btnBackForm = document.getElementById("btn-back-form");
+    btnBackForm.addEventListener("click", () => {
+      stopPixMonitoring();
+      pixDisplay.style.display = "none";
+      form.style.display = "flex";
+      button.disabled = false;
+      button.innerHTML = "<span>Gerar QR Code PIX e Liberar Arquivos</span> <span>⚡</span>";
+    });
+
+    // 9. Botão Copiar Código PIX
+    const btnCopyPix = document.getElementById("btn-copy-pix");
+    const pixCopyInput = document.getElementById("pix-copy-input");
+    const btnCopyText = document.getElementById("btn-copy-text");
+    const btnCopyIcon = document.getElementById("btn-copy-icon");
+
+    btnCopyPix.addEventListener("click", async () => {
+      const code = pixCopyInput.value;
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code);
+        btnCopyPix.classList.add("copied");
+        btnCopyIcon.textContent = "✅";
+        btnCopyText.textContent = "Código PIX Copiado!";
+        setTimeout(() => {
+          btnCopyPix.classList.remove("copied");
+          btnCopyIcon.textContent = "📋";
+          btnCopyText.textContent = "Copiar Código PIX";
+        }, 3000);
+      } catch {
+        pixCopyInput.select();
+        document.execCommand("copy");
+        btnCopyText.textContent = "Copiado!";
+        setTimeout(() => { btnCopyText.textContent = "Copiar Código PIX"; }, 2500);
+      }
+    });
+
+    // 10. Envio do Formulário de Checkout
     const form = document.getElementById("checkout-form");
     const errorEl = document.getElementById("error");
     const button = document.getElementById("submit");
@@ -1349,10 +1653,11 @@
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const phone = document.getElementById("phone").value.trim();
+      const cpf = document.getElementById("cpf").value.trim();
       const productId = productSelect.value;
 
       if (!name) {
-        errorEl.textContent = "Por favor, informe seu nome.";
+        errorEl.textContent = "Por favor, informe seu nome completo.";
         document.getElementById("name").focus();
         return;
       }
@@ -1366,40 +1671,96 @@
         document.getElementById("phone").focus();
         return;
       }
+      if (!cpf || !isValidClientCPF(cpf)) {
+        errorEl.textContent = "Por favor, informe um CPF válido para a emissão do PIX.";
+        document.getElementById("cpf").focus();
+        return;
+      }
 
       button.disabled = true;
-      button.innerHTML = "<span>Gerando cobrança PIX na PinPay...</span> <span>⏳</span>";
+      button.innerHTML = "<span>Gerando cobrança PIX imediata...</span> <span>⏳</span>";
+
       try {
         const res = await fetch("/api/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, phone, product_id: productId }),
+          body: JSON.stringify({ name, email, phone, cpf, product_id: productId }),
         });
         const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.checkout_url) {
-          throw new Error(data.error || "Não foi possível iniciar o pagamento na PinPay.");
+        if (!res.ok) {
+          throw new Error(data.error || "Não foi possível gerar o PIX no momento.");
         }
 
-        let checkoutUrl = data.checkout_url;
-        // Normalização preventiva: garante redirecionamento para o subdomínio hub da PinPay
-        if (checkoutUrl && checkoutUrl.includes("usepinpay.com/link/") && !checkoutUrl.includes("hub.usepinpay.com")) {
-          checkoutUrl = checkoutUrl
-            .replace("https://usepinpay.com/link/", "https://hub.usepinpay.com/link/")
-            .replace("http://usepinpay.com/link/", "https://hub.usepinpay.com/link/");
+        // Se o PIX inline foi gerado com sucesso na mesma tela
+        if (data.inline && data.pix_code) {
+          form.style.display = "none";
+          pixDisplay.style.display = "flex";
+
+          // Preenche dados na tela
+          const amountFormatted = (data.amount / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+          document.getElementById("pix-amount-tag").textContent = amountFormatted;
+          pixCopyInput.value = data.pix_code;
+
+          // Renderiza QR Code nítido
+          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=4&data=${encodeURIComponent(data.pix_code)}`;
+          document.getElementById("pix-qr-img").src = qrUrl;
+
+          // Rola suavemente até a área do PIX
+          pixDisplay.scrollIntoView({ behavior: "smooth", block: "center" });
+
+          // Inicia contagem regressiva de 15 minutos
+          let timeLeft = 15 * 60;
+          const timerEl = document.getElementById("pix-timer");
+          timerInterval = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+              clearInterval(timerInterval);
+              timerEl.textContent = "Expirado";
+              return;
+            }
+            const min = String(Math.floor(timeLeft / 60)).padStart(2, "0");
+            const sec = String(timeLeft % 60).padStart(2, "0");
+            timerEl.textContent = `${min}:${sec}`;
+          }, 1000);
+
+          // Monitoramento em tempo real do pagamento
+          pollInterval = setInterval(async () => {
+            try {
+              const chkRes = await fetch(`/api/check-payment?ref=${encodeURIComponent(data.external_reference)}&id=${encodeURIComponent(data.transaction_id || "")}`);
+              if (chkRes.ok) {
+                const chk = await chkRes.json();
+                if (chk.paid || chk.status === "delivered") {
+                  stopPixMonitoring();
+                  document.querySelector(".pix-waiting-box").innerHTML = `
+                    <div style="font-size: 28px;">🎉</div>
+                    <div class="pix-waiting-text">
+                      <strong style="color: #15803d; font-size: 15px;">Pagamento Confirmado com Sucesso!</strong>
+                      <p style="color: #166534;">Redirecionando para a sua página de downloads...</p>
+                    </div>
+                  `;
+                  setTimeout(() => {
+                    window.location.href = chk.redirect_url || `/obrigado.html?ref=${encodeURIComponent(data.external_reference)}`;
+                  }, 1800);
+                }
+              }
+            } catch (e) {}
+          }, 3000);
+
+          return;
         }
 
-        button.innerHTML = "<span>Redirecionando para o PIX...</span> <span>🚀</span>";
-        // Redireciona para o checkout oficial da PinPay onde o QR Code e PIX Copia e Cola são gerados
-        window.location.href = checkoutUrl;
+        // Fallback caso redirecione
+        if (data.checkout_url) {
+          button.innerHTML = "<span>Redirecionando para o PIX...</span> <span>🚀</span>";
+          window.location.href = data.checkout_url;
+          return;
+        }
 
-        // Fallback visual caso o navegador bloqueie o redirecionamento
-        setTimeout(() => {
-          errorEl.innerHTML = `<span style="color: var(--pine-green); font-weight: bold;">✓ PIX gerado! <a href="${checkoutUrl}" target="_blank" style="color: var(--xmas-red); text-decoration: underline;">Clique aqui para abrir seu pagamento PinPay</a></span>`;
-        }, 1200);
+        throw new Error(data.error || "Não foi possível gerar o código PIX.");
       } catch (err) {
         errorEl.textContent = err.message;
         button.disabled = false;
-        button.innerHTML = "<span>Ir para o pagamento seguro na PinPay</span> <span>⚡</span>";
+        button.innerHTML = "<span>Gerar QR Code PIX e Liberar Arquivos</span> <span>⚡</span>";
       }
     });
   </script>

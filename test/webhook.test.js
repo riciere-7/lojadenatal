@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import { onRequestPost as webhookHandler } from "../functions/api/webhook.js";
 import { onRequestPost as checkoutHandler } from "../functions/api/checkout.js";
+import { onRequestGet as checkPaymentHandler } from "../functions/api/check-payment.js";
 import { onRequestGet as adminGetHandler, onRequestPost as adminPostHandler } from "../functions/api/admin.js";
 
 // Implementação simples de simulação de KV da Cloudflare
@@ -79,6 +80,32 @@ describe("Webhook e Checkout da Loja de Natal", () => {
       if (urlStr.includes("api.usepinpay.com")) {
         const body = options.body ? JSON.parse(options.body) : {};
         pinpayCalls.push({ url: urlStr, options, body });
+
+        if (urlStr.includes("/transactions")) {
+          return new Response(JSON.stringify({ object: "list", data: [] }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
+        if (urlStr.includes("/pix")) {
+          return new Response(
+            JSON.stringify({
+              id: "tx_mock_123",
+              amount: 990,
+              status: "pending",
+              pix: {
+                qr_code: "00020126_mock_pix_code_stone",
+                expires_at: "2026-12-31T23:59:59Z",
+              },
+            }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+        }
+
         return new Response(
           JSON.stringify({
             checkout_url: "https://pay.usepinpay.com/chk_simulado_123",
@@ -303,11 +330,12 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     assert.equal(resendCalls.length, 1, "Contador de emails permanece em 1 (sem duplicação).");
   });
 
-  test("5. Checkout grava pedido pendente em KV ORDERS com WhatsApp e Nome", async () => {
+  test("5. Checkout grava pedido pendente em KV ORDERS com WhatsApp, CPF e retorna PIX inline", async () => {
     const reqBody = {
       name: "Maria Teste",
       email: "teste_checkout@exemplo.com",
       phone: "(11) 98888-7777",
+      cpf: "60911532340",
       product_id: "guia",
     };
 
@@ -320,13 +348,16 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     const res = await checkoutHandler({ request, env });
     assert.equal(res.status, 200);
     const data = await res.json();
-    assert.equal(data.checkout_url, "https://pay.usepinpay.com/chk_simulado_123");
+    assert.equal(data.success, true);
+    assert.equal(data.inline, true);
+    assert.equal(data.pix_code, "00020126_mock_pix_code_stone");
 
     assert.equal(pinpayCalls.length, 1);
     const extRef = pinpayCalls[0].body.external_reference;
     assert.match(extRef, /^NATAL-[0-9a-f-]+$/i);
     assert.equal(pinpayCalls[0].body.customer.phone, "11988887777");
     assert.equal(pinpayCalls[0].body.customer.name, "Maria Teste");
+    assert.equal(pinpayCalls[0].body.customer.document.number, "60911532340");
 
     // Confere se o pedido pendente foi registrado no KV ORDERS
     const storedOrderRaw = await mockKV.get(`order:${extRef}`);
@@ -335,6 +366,7 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     assert.equal(storedOrder.email, "teste_checkout@exemplo.com");
     assert.equal(storedOrder.name, "Maria Teste");
     assert.equal(storedOrder.phone, "11988887777");
+    assert.equal(storedOrder.cpf, "60911532340");
     assert.equal(storedOrder.product_id, "guia");
     assert.equal(storedOrder.status, "pending");
   });
@@ -353,11 +385,15 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     assert.match(data.error, /PINPAY_SECRET_KEY/);
   });
 
-  test("5c. Checkout normaliza usepinpay.com/link/ para hub.usepinpay.com/link/", async () => {
-    // Sobrescreve o mock temporariamente para retornar usepinpay.com sem hub
+  test("5c. Checkout fallback: quando /pix não gera código, normaliza checkout_url para hub", async () => {
+    // Sobrescreve o mock temporariamente para simular falha em /pix e sucesso em /checkouts
     const oldFetch = globalThis.fetch;
     globalThis.fetch = async (url, options = {}) => {
-      if (String(url).includes("api.usepinpay.com")) {
+      const urlStr = String(url);
+      if (urlStr.includes("/pix")) {
+        return new Response(JSON.stringify({ error: "Acquirer unavailable" }), { status: 400 });
+      }
+      if (urlStr.includes("/checkouts")) {
         return new Response(
           JSON.stringify({
             checkout_url: "https://usepinpay.com/link/635247cf-42da-4fbe-8e65-e80aed6d0c9d",
@@ -376,6 +412,7 @@ describe("Webhook e Checkout da Loja de Natal", () => {
           name: "Cliente Teste",
           email: "normaliza@natal.com",
           phone: "11999998888",
+          cpf: "60911532340",
           product_id: "cartoes",
         }),
       });
@@ -390,6 +427,18 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     } finally {
       globalThis.fetch = oldFetch;
     }
+  });
+
+  test("5d. Endpoint /api/check-payment detecta pagamento concluído e retorna redirect_url", async () => {
+    const ref = "NATAL-chk-teste-123";
+    await mockKV.put(`delivered:${ref}`, JSON.stringify({ delivered_at: new Date().toISOString() }));
+
+    const request = new Request(`https://site.pages.dev/api/check-payment?ref=${ref}`);
+    const res = await checkPaymentHandler({ request, env });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.paid, true);
+    assert.match(data.redirect_url, /obrigado\.html/);
   });
 
   test("6. Dados do pedido vindos no payload da PinPay funcionam caso KV esteja vazio", async () => {

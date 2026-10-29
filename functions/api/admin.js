@@ -34,45 +34,89 @@ export async function onRequestGet({ request, env }) {
     return json({ error: "Acesso não autorizado ao painel admin." }, 401);
   }
 
-  const orders = [];
+  const ordersMap = new Map();
   let totalDeliveredAmount = 0;
   let deliveredCount = 0;
   let pendingCount = 0;
 
+  // 1. Carrega os dados gravados no KV ORDERS (se configurado)
   if (env.ORDERS) {
     try {
-      // Lista as chaves com prefixo order:
       const listRes = await env.ORDERS.list({ prefix: "order:" });
       const keys = listRes?.keys || [];
 
-      // Carrega os dados de cada pedido
       for (const k of keys) {
         const raw = await env.ORDERS.get(k.name);
         if (raw) {
           try {
             const order = JSON.parse(raw);
-            
-            // Checa também se existe chave de entrega para confirmar status
             const isDelivered = await env.ORDERS.get(`delivered:${order.external_reference}`);
-            if (isDelivered && order.status !== "delivered") {
+            if (isDelivered) {
               order.status = "delivered";
             }
-
-            if (order.status === "delivered") {
-              deliveredCount++;
-              totalDeliveredAmount += Number(order.amount || 0);
-            } else {
-              pendingCount++;
-            }
-
-            // Anexa nome legível do produto
-            order.product_name = PRODUCTS[order.product_id]?.name || order.product_id;
-            orders.push(order);
+            order.product_name = PRODUCTS[order.product_id]?.name || order.product_id || "Kit Natal";
+            ordersMap.set(order.external_reference || k.name, order);
           } catch {}
         }
       }
     } catch (err) {
       console.error("Erro ao listar pedidos do KV:", err);
+    }
+  }
+
+  // 2. Sincroniza com as transações da API da PinPay caso PINPAY_SECRET_KEY esteja configurada
+  if (env.PINPAY_SECRET_KEY) {
+    try {
+      const res = await fetch("https://api.usepinpay.com/functions/v1/api-v1/transactions?limit=100", {
+        headers: { Authorization: `Bearer ${env.PINPAY_SECRET_KEY}` },
+      });
+      if (res.ok) {
+        const pinData = await res.json();
+        const txList = pinData?.data || [];
+        for (const tx of txList) {
+          const extRef = tx.external_reference || tx.id;
+          const isPaid = ["paid", "approved", "completed"].includes(String(tx.status || "").toLowerCase());
+          
+          let phone = tx.customer?.phone || "";
+          if (phone && !phone.startsWith("55") && phone.length <= 11) {
+            phone = "55" + phone;
+          }
+
+          const existing = ordersMap.get(extRef);
+          if (existing) {
+            if (isPaid) existing.status = "delivered";
+            if (!existing.phone && phone) existing.phone = phone;
+            if (!existing.name && tx.customer?.name) existing.name = tx.customer.name;
+            if (!existing.transaction_id && tx.id) existing.transaction_id = tx.id;
+          } else {
+            ordersMap.set(extRef, {
+              external_reference: extRef,
+              transaction_id: tx.id,
+              name: tx.customer?.name || "Cliente",
+              email: tx.customer?.email || "",
+              phone: phone,
+              cpf: tx.customer?.document?.number || tx.customer?.document || "",
+              product_id: tx.metadata?.product_id || "combo",
+              product_name: tx.description || "Kit Natal",
+              amount: tx.amount,
+              status: isPaid ? "delivered" : "pending",
+              created_at: tx.created_at,
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao sincronizar transações da PinPay:", err);
+    }
+  }
+
+  const orders = Array.from(ordersMap.values());
+  for (const o of orders) {
+    if (o.status === "delivered") {
+      deliveredCount++;
+      totalDeliveredAmount += Number(o.amount || 0);
+    } else {
+      pendingCount++;
     }
   }
 

@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { onRequestPost as checkoutHandler } from "./functions/api/checkout.js";
 import { onRequestPost as webhookHandler } from "./functions/api/webhook.js";
+import { onRequestGet as checkPaymentHandler } from "./functions/api/check-payment.js";
 import { onRequestGet as adminGetHandler, onRequestPost as adminPostHandler } from "./functions/api/admin.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -136,6 +137,8 @@ const server = http.createServer(async (req, res) => {
     let webResponse;
     if (pathname === "/api/checkout" && req.method === "POST") {
       webResponse = await checkoutHandler({ request: webRequest, env });
+    } else if (pathname === "/api/check-payment" && req.method === "GET") {
+      webResponse = await checkPaymentHandler({ request: webRequest, env });
     } else if ((pathname === "/api/webhook" || pathname === "/api/webhook/pinpay") && req.method === "POST") {
       webResponse = await webhookHandler({ request: webRequest, env });
     } else if (pathname === "/api/admin") {
