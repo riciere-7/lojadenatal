@@ -294,6 +294,20 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     assert.equal(storedOrder.status, "pending");
   });
 
+  test("5b. Checkout rejeita se PINPAY_SECRET_KEY não estiver no env", async () => {
+    const envSemKey = { ...env, PINPAY_SECRET_KEY: "" };
+    const request = new Request("https://site.pages.dev/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "teste@teste.com", product_id: "combo" }),
+    });
+
+    const res = await checkoutHandler({ request, env: envSemKey });
+    assert.equal(res.status, 500);
+    const data = await res.json();
+    assert.match(data.error, /PINPAY_SECRET_KEY/);
+  });
+
   test("6. Dados do pedido vindos no payload da PinPay funcionam caso KV esteja vazio", async () => {
     const ref = "NATAL-direto-1";
     // Sem gravar em mockKV previamente

@@ -11,6 +11,11 @@ function json(body, status = 200) {
 }
 
 export async function onRequestPost({ request, env }) {
+  if (!env.PINPAY_SECRET_KEY) {
+    console.error("PINPAY_SECRET_KEY não está configurada nas variáveis de ambiente.");
+    return json({ error: "Configuração do servidor incompleta: variável PINPAY_SECRET_KEY ausente na Cloudflare Pages." }, 500);
+  }
+
   let data;
   try {
     data = await request.json();
