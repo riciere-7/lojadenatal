@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import { onRequestPost as webhookHandler } from "../functions/api/webhook.js";
 import { onRequestPost as checkoutHandler } from "../functions/api/checkout.js";
+import { onRequestGet as adminGetHandler, onRequestPost as adminPostHandler } from "../functions/api/admin.js";
 
 // Implementação simples de simulação de KV da Cloudflare
 class MockKV {
@@ -20,6 +21,16 @@ class MockKV {
 
   async delete(key) {
     this.store.delete(key);
+  }
+
+  async list({ prefix = "" } = {}) {
+    const keys = [];
+    for (const k of this.store.keys()) {
+      if (!prefix || k.startsWith(prefix)) {
+        keys.push({ name: k });
+      }
+    }
+    return { keys };
   }
 }
 
@@ -349,5 +360,99 @@ describe("Webhook e Checkout da Loja de Natal", () => {
     // Chave de entrega NÃO deve permanecer gravada, permitindo que a PinPay reenvie o webhook
     const delivered = await mockKV.get(`delivered:${ref}`);
     assert.equal(delivered, null, "A chave delivered deve ter sido removida para permitir retry.");
+  });
+
+  test("8. Painel Admin: autenticação com senha válida e rejeição com senha incorreta", async () => {
+    env.ADMIN_PASSWORD = "segredonatalino";
+
+    // Teste com senha errada
+    const reqFail = new Request("https://site.pages.dev/api/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "login", password: "senha_errada" }),
+    });
+    const resFail = await adminPostHandler({ request: reqFail, env });
+    assert.equal(resFail.status, 401);
+
+    // Teste com senha correta
+    const reqOk = new Request("https://site.pages.dev/api/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "login", password: "segredonatalino" }),
+    });
+    const resOk = await adminPostHandler({ request: reqOk, env });
+    assert.equal(resOk.status, 200);
+    const dataOk = await resOk.json();
+    assert.equal(dataOk.success, true);
+    assert.ok(dataOk.token);
+  });
+
+  test("9. Painel Admin: listagem de pedidos e cálculo de métricas", async () => {
+    env.ADMIN_PASSWORD = "adminpass123";
+
+    // Cria um pedido entregue e um pendente
+    await mockKV.put(
+      "order:NATAL-1",
+      JSON.stringify({
+        external_reference: "NATAL-1",
+        email: "pago@natal.com",
+        product_id: "combo",
+        amount: 1690,
+        status: "delivered",
+        created_at: new Date().toISOString(),
+      })
+    );
+    await mockKV.put("delivered:NATAL-1", JSON.stringify({ delivered_at: new Date().toISOString() }));
+
+    await mockKV.put(
+      "order:NATAL-2",
+      JSON.stringify({
+        external_reference: "NATAL-2",
+        email: "pendente@natal.com",
+        product_id: "cartoes",
+        amount: 990,
+        status: "pending",
+        created_at: new Date().toISOString(),
+      })
+    );
+
+    const req = new Request("https://site.pages.dev/api/admin", {
+      method: "GET",
+      headers: { Authorization: "Bearer adminpass123" },
+    });
+
+    const res = await adminGetHandler({ request: req, env });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.metrics.totalOrders, 2);
+    assert.equal(data.metrics.deliveredCount, 1);
+    assert.equal(data.metrics.pendingCount, 1);
+    assert.equal(data.metrics.totalDeliveredAmountCentavos, 1690);
+    assert.equal(data.metrics.totalDeliveredReais, "16.90");
+    assert.equal(data.orders.length, 2);
+  });
+
+  test("10. Painel Admin: simulador de webhook dispara payment_approved e entrega email", async () => {
+    env.ADMIN_PASSWORD = "testpassword";
+
+    const req = new Request("https://site.pages.dev/api/admin", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer testpassword",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "test_webhook",
+        email: "simuladoteste@natal.com",
+        product_id: "guia",
+      }),
+    });
+
+    const res = await adminPostHandler({ request: req, env });
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.success, true);
+    assert.equal(resendCalls.length, 1);
+    assert.deepEqual(resendCalls[0].body.to, ["simuladoteste@natal.com"]);
   });
 });

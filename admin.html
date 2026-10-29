@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel Administrativo | Loja de Natal 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --xmas-red: #c41e3a;
+      --xmas-red-dark: #8b0000;
+      --pine-green: #1b4332;
+      --pine-green-light: #2d6a4f;
+      --gold: #d4af37;
+      --gold-light: #fef08a;
+      --cream-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --success: #16a34a;
+      --warning: #d97706;
+      --error: #dc2626;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background-color: var(--cream-bg);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* Barra Superior */
+    .admin-nav {
+      background: linear-gradient(90deg, #1e293b, #0f172a);
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--gold);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+    .admin-logo {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      text-decoration: none;
+    }
+    .admin-logo span { color: var(--gold-light); }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Tela de Login */
+    #login-screen {
+      min-height: calc(100vh - 70px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-box {
+      max-width: 420px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 36px 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border: 2px solid var(--line);
+      text-align: center;
+    }
+    .login-icon { font-size: 40px; margin-bottom: 12px; }
+    .login-title {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      color: var(--xmas-red-dark);
+      margin-bottom: 6px;
+    }
+    .login-desc { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .login-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      border: 2px solid var(--line);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+    .login-input:focus { border-color: var(--xmas-red); }
+    .login-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--xmas-red);
+      color: #fff;
+      font-weight: 700;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background 0.2s;
+    }
+    .login-btn:hover { background: var(--xmas-red-dark); }
+    .login-error { color: var(--error); font-size: 13px; margin-top: 10px; min-height: 18px; font-weight: 600; }
+
+    /* Dashboard Principal */
+    #dashboard-screen {
+      display: none;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* Cards de Métricas */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .metric-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 22px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 5px; height: 100%;
+      background: var(--xmas-red);
+    }
+    .metric-card.success::after { background: var(--success); }
+    .metric-card.warning::after { background: var(--warning); }
+    .metric-card.gold::after { background: var(--gold); }
+    .metric-label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-value { font-family: 'Cinzel', serif; font-size: 32px; font-weight: 800; color: var(--ink); margin: 6px 0; }
+    .metric-sub { font-size: 12.5px; color: var(--muted); }
+
+    /* Layout em 2 Colunas */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 960px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Seções e Cards de Conteúdo */
+    .content-box {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .box-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Tabela de Vendas */
+    .table-responsive {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+    th {
+      padding: 12px 14px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 700;
+      border-bottom: 2px solid var(--line);
+      white-space: nowrap;
+    }
+    td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+    tr:hover td { background: #fdfcf9; }
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .badge-status.delivered { background: #dcfce7; color: #15803d; }
+    .badge-status.pending { background: #fef3c7; color: #b45309; }
+
+    .action-btn {
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--ink);
+      transition: all 0.2s;
+    }
+    .action-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+    /* Painéis Laterais: PinPay e Simulador */
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .btn-primary {
+      width: 100%;
+      background: var(--xmas-red);
+      color: #fff;
+      border: 0;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary:hover { background: var(--xmas-red-dark); }
+    .btn-primary:disabled { opacity: 0.6; cursor: wait; }
+
+    .btn-green {
+      background: var(--pine-green);
+    }
+    .btn-green:hover { background: var(--pine-green-light); }
+
+    .status-pill {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .status-pill.ok { background: #dcfce7; color: #166534; }
+    .status-pill.warn { background: #fee2e2; color: #991b1b; }
+
+    /* Console de Resposta */
+    .console-box {
+      background: #0f172a;
+      color: #38bdf8;
+      border-radius: 10px;
+      padding: 14px;
+      font-family: monospace;
+      font-size: 12.5px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 14px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra Superior -->
+  <header class="admin-nav">
+    <a href="/admin" class="admin-logo">
+      🎄 Loja de Natal <span>• Admin</span>
+    </a>
+    <div class="nav-actions">
+      <a href="/" target="_blank" class="btn-secondary">Ver Loja ↗</a>
+      <button id="btn-logout" class="btn-secondary" style="display: none;">Sair</button>
+    </div>
+  </header>
+
+  <!-- Tela de Login -->
+  <section id="login-screen">
+    <div class="login-box">
+      <div class="login-icon">🔒</div>
+      <h1 class="login-title">Acesso Restrito</h1>
+      <p class="login-desc">Digite a senha administrativa da loja para acessar o painel de vendas e integrações.</p>
+      <form id="form-login">
+        <input type="password" id="admin-pass" class="login-input" placeholder="Senha do Administrador" required autofocus>
+        <button type="submit" id="btn-login-submit" class="login-btn">Entrar no Painel</button>
+        <div id="login-error" class="login-error"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Dashboard Principal -->
+  <main id="dashboard-screen">
+    
+    <!-- Cards de Métricas -->
+    <div class="metrics-grid">
+      <div class="metric-card success">
+        <div class="metric-label">Faturamento Aprovado</div>
+        <div class="metric-value" id="metric-amount">R$ 0,00</div>
+        <div class="metric-sub" id="metric-delivered-count">0 pedidos entregues</div>
+      </div>
+      <div class="metric-card gold">
+        <div class="metric-label">Total de Pedidos</div>
+        <div class="metric-value" id="metric-total-orders">0</div>
+        <div class="metric-sub">registrados no KV ORDERS</div>
+      </div>
+      <div class="metric-card warning">
+        <div class="metric-label">Aguardando Pagamento</div>
+        <div class="metric-value" id="metric-pending-count">0</div>
+        <div class="metric-sub">checkouts gerados via PIX</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Ticket Médio</div>
+        <div class="metric-value" id="metric-ticket-medio">R$ 0,00</div>
+        <div class="metric-sub">por venda aprovada</div>
+      </div>
+    </div>
+
+    <!-- Layout 2 Colunas -->
+    <div class="dashboard-layout">
+      
+      <!-- Coluna Esquerda: Lista de Pedidos -->
+      <section class="content-box">
+        <div class="box-header">
+          <h2 class="box-title">📦 Vendas e Pedidos Recentes</h2>
+          <button id="btn-refresh-orders" class="action-btn">🔄 Atualizar Lista</button>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Referência</th>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <tr>
+                <td colspan="7" class="empty-state">Carregando pedidos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Coluna Direita: Ferramentas PinPay e Simulador de Webhook -->
+      <div>
+        
+        <!-- Sincronização PinPay -->
+        <section class="content-box">
+          <div class="box-header">
+            <h3 class="box-title">💳 Integração PinPay</h3>
+            <span id="pinpay-status-pill" class="status-pill ok">Ativa</span>
+          </div>
+          <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">
+            Sua chave secreta configurada: <br><strong id="pinpay-secret-display" style="font-family: monospace;">sk_live_...</strong>
+          </p>
+          <div style="margin-bottom: 12px;">
+            <label class="form-label">Registrar Webhook Oficial:</label>
+            <input type="text" id="webhook-target-url" class="form-input" value="https://lojadenatal.pages.dev/api/webhook/pinpay">
+          </div>
+          <div style="display: flex; gap: 8px; flex-direction: column;">
+            <button id="btn-sync-pinpay" class="btn-primary">
+              <span>Testar Conexão com a PinPay</span>
+            </button>
+            <button id="btn-register-pinpay" class="btn-primary btn-green">
+              <span>Registrar URL na Conta PinPay</span>
+            </button>
+          </div>
+          <div id="pinpay-console" class="console-box" style="display: none;"></div>
+        </section>
+
+        <!-- Simulador de Webhook -->
+        <section class="content-box">
+          <div class="box-header">
+            <h3 class="box-title">⚡ Simulador de Webhook</h3>
+          </div>
+          <p style="font-size: 13px; color: var(--muted); margin-bottom: 14px;">
+            Dispare um evento <code>payment_approved</code> de teste com assinatura HMAC válida para verificar o fluxo de entrega de email e gravação em KV.
+          </p>
+          <form id="form-test-webhook">
+            <div style="margin-bottom: 10px;">
+              <label class="form-label">Produto de Teste:</label>
+              <select id="test-product" class="form-input">
+                <option value="combo" selected>Kit Natal completo (R$ 16,90)</option>
+                <option value="cartoes">Cartões de Natal (R$ 9,90)</option>
+                <option value="guia">Guia para economizar (R$ 9,90)</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 14px;">
+              <label class="form-label">Email de Teste:</label>
+              <input type="email" id="test-email" class="form-input" placeholder="seu-email@gmail.com" required>
+            </div>
+            <button type="submit" id="btn-test-webhook" class="btn-primary">
+              <span>Disparar Webhook de Teste</span>
+            </button>
+          </form>
+          <div id="webhook-console" class="console-box" style="display: none;"></div>
+        </section>
+
+        <!-- Status dos Links do Google Drive -->
+        <section class="content-box">
+          <div class="box-header">
+            <h3 class="box-title">📁 Pastas Google Drive</h3>
+          </div>
+          <div style="font-size: 13px; display: flex; flex-direction: column; gap: 8px;" id="drive-status-list">
+            <div>Cartões: <span id="status-cartoes" class="status-pill ok">Configurado</span></div>
+            <div>Guia: <span id="status-guia" class="status-pill ok">Configurado</span></div>
+            <div>Kit Completo: <span id="status-kit" class="status-pill ok">Configurado</span></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Gerenciamento de Estado e Autenticação
+    let authToken = sessionStorage.getItem("admin_token") || "";
+
+    const loginScreen = document.getElementById("login-screen");
+    const dashboardScreen = document.getElementById("dashboard-screen");
+    const btnLogout = document.getElementById("btn-logout");
+    const loginError = document.getElementById("login-error");
+
+    function checkAuth() {
+      if (authToken) {
+        loginScreen.style.display = "none";
+        dashboardScreen.style.display = "block";
+        btnLogout.style.display = "inline-flex";
+        loadDashboardData();
+      } else {
+        loginScreen.style.display = "flex";
+        dashboardScreen.style.display = "none";
+        btnLogout.style.display = "none";
+      }
+    }
+
+    // Login Form
+    document.getElementById("form-login").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginError.textContent = "";
+      const password = document.getElementById("admin-pass").value;
+      const btn = document.getElementById("btn-login-submit");
+      btn.disabled = true;
+      btn.textContent = "Verificando...";
+
+      try {
+        const res = await fetch("/api/admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "login", password }),
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          authToken = data.token;
+          sessionStorage.setItem("admin_token", authToken);
+          checkAuth();
+        } else {
+          loginError.textContent = data.error || "Senha incorreta.";
+        }
+      } catch (err) {
+        loginError.textContent = "Erro ao conectar com o servidor.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Entrar no Painel";
+      }
+    });
+
+    btnLogout.addEventListener("click", () => {
+      authToken = "";
+      sessionStorage.removeItem("admin_token");
+      checkAuth();
+    });
+
+    // Carregar Dados do Dashboard
+    async function loadDashboardData() {
+      try {
+        const res = await fetch("/api/admin", {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        if (res.status === 401) {
+          authToken = "";
+          sessionStorage.removeItem("admin_token");
+          checkAuth();
+          return;
+        }
+        const data = await res.json();
+        renderMetrics(data.metrics);
+        renderOrders(data.orders);
+        renderConfigStatus(data.configStatus);
+      } catch (err) {
+        console.error("Erro ao carregar dados:", err);
+      }
+    }
+
+    function renderMetrics(metrics) {
+      if (!metrics) return;
+      document.getElementById("metric-amount").textContent = `R$ ${metrics.totalDeliveredReais.replace(".", ",")}`;
+      document.getElementById("metric-delivered-count").textContent = `${metrics.deliveredCount} entregas concluídas`;
+      document.getElementById("metric-total-orders").textContent = metrics.totalOrders;
+      document.getElementById("metric-pending-count").textContent = metrics.pendingCount;
+
+      const ticket = metrics.deliveredCount > 0 ? (metrics.totalDeliveredAmountCentavos / metrics.deliveredCount / 100).toFixed(2) : "0,00";
+      document.getElementById("metric-ticket-medio").textContent = `R$ ${ticket.replace(".", ",")}`;
+    }
+
+    function renderOrders(orders) {
+      const tbody = document.getElementById("orders-table-body");
+      if (!orders || orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-state">Nenhum pedido registrado ainda no KV ORDERS.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map(o => {
+        const dateStr = o.created_at ? new Date(o.created_at).toLocaleString("pt-BR") : "-";
+        const valReais = o.amount ? `R$ ${(o.amount / 100).toFixed(2).replace(".", ",")}` : "-";
+        const isDelivered = o.status === "delivered";
+        const statusBadge = isDelivered 
+          ? `<span class="badge-status delivered">✓ Aprovado / Entregue</span>`
+          : `<span class="badge-status pending">⏳ Aguardando PIX</span>`;
+
+        return `
+          <tr>
+            <td><small>${dateStr}</small></td>
+            <td><strong style="font-family: monospace;">${o.external_reference || "-"}</strong></td>
+            <td>${o.email || "-"}</td>
+            <td>${o.product_name || o.product_id || "-"}</td>
+            <td><strong>${valReais}</strong></td>
+            <td>${statusBadge}</td>
+            <td>
+              <button class="action-btn" onclick="resendDelivery('${o.external_reference}')" title="Reenviar link do produto por email">
+                ✉️ Reenviar
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderConfigStatus(config) {
+      if (!config) return;
+      const secretEl = document.getElementById("pinpay-secret-display");
+      secretEl.textContent = config.pinpaySecretMasked || "Não configurada";
+      
+      const pill = document.getElementById("pinpay-status-pill");
+      pill.textContent = config.hasPinpaySecret ? "Ativa" : "Pendente";
+      pill.className = `status-pill ${config.hasPinpaySecret ? "ok" : "warn"}`;
+
+      document.getElementById("status-cartoes").className = `status-pill ${config.driveCartoes ? "ok" : "warn"}`;
+      document.getElementById("status-cartoes").textContent = config.driveCartoes ? "Configurado" : "Faltando";
+
+      document.getElementById("status-guia").className = `status-pill ${config.driveGuia ? "ok" : "warn"}`;
+      document.getElementById("status-guia").textContent = config.driveGuia ? "Configurado" : "Faltando";
+
+      document.getElementById("status-kit").className = `status-pill ${config.driveKit ? "ok" : "warn"}`;
+      document.getElementById("status-kit").textContent = config.driveKit ? "Configurado" : "Faltando";
+    }
+
+    document.getElementById("btn-refresh-orders").addEventListener("click", loadDashboardData);
+
+    // Reenviar Entrega por Email
+    window.resendDelivery = async function(ref) {
+      if (!confirm(`Deseja reenviar o email de entrega para o pedido ${ref}?`)) return;
+      try {
+        const res = await fetch("/api/admin", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: "resend_delivery", external_reference: ref }),
+        });
+        const data = await res.json();
+        alert(data.message || data.error);
+        loadDashboardData();
+      } catch (err) {
+        alert("Erro ao disparar reenvio.");
+      }
+    };
+
+    // Sincronizar / Testar PinPay
+    document.getElementById("btn-sync-pinpay").addEventListener("click", async () => {
+      const consoleBox = document.getElementById("pinpay-console");
+      consoleBox.style.display = "block";
+      consoleBox.textContent = "Consultando webhooks e credenciais na PinPay...";
+
+      try {
+        const res = await fetch("/api/admin", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: "sync_pinpay" }),
+        });
+        const data = await res.json();
+        consoleBox.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        consoleBox.textContent = "Erro: " + err.message;
+      }
+    });
+
+    // Registrar Webhook na PinPay
+    document.getElementById("btn-register-pinpay").addEventListener("click", async () => {
+      const targetUrl = document.getElementById("webhook-target-url").value.trim();
+      if (!targetUrl) return alert("Informe a URL do webhook.");
+      const consoleBox = document.getElementById("pinpay-console");
+      consoleBox.style.display = "block";
+      consoleBox.textContent = `Registrando webhook para ${targetUrl}...`;
+
+      try {
+        const res = await fetch("/api/admin", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: "sync_pinpay", register_webhook_url: targetUrl }),
+        });
+        const data = await res.json();
+        consoleBox.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        consoleBox.textContent = "Erro: " + err.message;
+      }
+    });
+
+    // Simulador de Webhook
+    document.getElementById("form-test-webhook").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const consoleBox = document.getElementById("webhook-console");
+      const btn = document.getElementById("btn-test-webhook");
+      consoleBox.style.display = "block";
+      consoleBox.textContent = "Disparando webhook de teste e validando entrega...";
+      btn.disabled = true;
+
+      const email = document.getElementById("test-email").value.trim();
+      const productId = document.getElementById("test-product").value;
+
+      try {
+        const res = await fetch("/api/admin", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "test_webhook",
+            email,
+            product_id: productId,
+          }),
+        });
+        const data = await res.json();
+        consoleBox.textContent = JSON.stringify(data, null, 2);
+        loadDashboardData();
+      } catch (err) {
+        consoleBox.textContent = "Erro: " + err.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Inicialização
+    checkAuth();
+  </script>
+</body>
+</html>

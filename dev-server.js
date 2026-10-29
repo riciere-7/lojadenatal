@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { onRequestPost as checkoutHandler } from "./functions/api/checkout.js";
 import { onRequestPost as webhookHandler } from "./functions/api/webhook.js";
+import { onRequestGet as adminGetHandler, onRequestPost as adminPostHandler } from "./functions/api/admin.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,15 @@ class DevKV {
   }
   async delete(key) {
     this.store.delete(key);
+  }
+  async list({ prefix = "" } = {}) {
+    const keys = [];
+    for (const k of this.store.keys()) {
+      if (!prefix || k.startsWith(prefix)) {
+        keys.push({ name: k });
+      }
+    }
+    return { keys };
   }
 }
 
@@ -128,6 +138,16 @@ const server = http.createServer(async (req, res) => {
       webResponse = await checkoutHandler({ request: webRequest, env });
     } else if ((pathname === "/api/webhook" || pathname === "/api/webhook/pinpay") && req.method === "POST") {
       webResponse = await webhookHandler({ request: webRequest, env });
+    } else if (pathname === "/api/admin") {
+      if (req.method === "GET") {
+        webResponse = await adminGetHandler({ request: webRequest, env });
+      } else if (req.method === "POST") {
+        webResponse = await adminPostHandler({ request: webRequest, env });
+      } else {
+        res.writeHead(405);
+        res.end("Method Not Allowed");
+        return;
+      }
     } else {
       res.writeHead(404, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Endpoint não encontrado" }));
@@ -142,6 +162,7 @@ const server = http.createServer(async (req, res) => {
 
   // Roteamento de arquivos estáticos
   if (pathname === "/") pathname = "/index.html";
+  if (pathname === "/admin") pathname = "/admin.html";
   const filePath = path.join(__dirname, pathname);
 
   try {
@@ -165,8 +186,10 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`\n🎄 Servidor de desenvolvimento rodando em: http://localhost:${PORT}`);
   console.log(`Landing page:  http://localhost:${PORT}/`);
+  console.log(`Painel Admin:  http://localhost:${PORT}/admin`);
   console.log(`Obrigado:      http://localhost:${PORT}/obrigado.html`);
   console.log(`API Checkout:  http://localhost:${PORT}/api/checkout`);
-  console.log(`API Webhook:   http://localhost:${PORT}/api/webhook\n`);
+  console.log(`API Webhook:   http://localhost:${PORT}/api/webhook`);
+  console.log(`API Admin:     http://localhost:${PORT}/api/admin\n`);
 });
 

@@ -7,10 +7,14 @@ Landing page estática na Cloudflare Pages, com checkout PinPay (PIX), funções
 ```
 index.html                  landing page e formulário de compra
 obrigado.html               página após o pagamento
+admin.html                  painel administrativo (métricas, vendas, simulador e pinpay)
 functions/
   api/
     checkout.js             cria a sessão de checkout na PinPay e grava pedido pendente
     webhook.js              recebe webhook payment_approved, valida HMAC, checa idempotência e entrega
+    webhook/
+      pinpay.js             alias para webhook /api/webhook/pinpay
+    admin.js                API do painel admin (métricas, pedidos, sync pinpay e simulador)
   _lib/
     products.js             catálogo de produtos e resolução das variáveis de link de entrega
     email.js                serviço de envio de email transacional via Resend
@@ -26,6 +30,7 @@ No painel da Cloudflare Pages, em **Settings → Environment variables**, config
 
 | Variável | Tipo | Descrição |
 | :--- | :--- | :--- |
+| `ADMIN_PASSWORD` | Secret | Senha para login no Painel Admin (`/admin`). Padrão local: `natal2026admin`. |
 | `PINPAY_SECRET_KEY` | Secret | Chave secreta de API da PinPay (`sk_...`). |
 | `PINPAY_WEBHOOK_SECRET` | Secret | Segredo retornado no cadastro do webhook da PinPay (`whsec_...`). |
 | `RESEND_API_KEY` | Secret | Chave de API do Resend (`re_...`). |
@@ -74,6 +79,18 @@ A confirmação de pagamento é enviada pela PinPay via webhook global da conta:
 7. **Idempotência:** O sistema verifica se a chave `delivered:<external_reference>` existe no KV `ORDERS`. Se já existir, encerra com `200 OK` imediatamente, evitando envio duplicado.
 8. **Resolução de produto e link:** O webhook consulta o KV `order:<external_reference>` (e/ou dados do payload) para identificar o `product_id` e o email do cliente. Obtém o link da pasta correspondente do Google Drive configurado nas variáveis de ambiente.
 9. **Gravação e Disparo:** A chave de entrega é gravada no KV antes do envio (para prevenir race conditions). Em seguida, `sendDeliveryEmail` dispara o email com os links via Resend. Se o envio de email falhar, a chave de entrega é removida para permitir que o retry automático do webhook tente novamente.
+
+---
+
+## Painel Administrativo (`/admin`)
+
+O projeto inclui um painel de controle acessível pela rota `/admin`:
+
+- **Acompanhamento de Vendas:** visualização de todos os pedidos salvos no KV `ORDERS`, status de pagamento/entrega, faturamento total, quantidade de pedidos e ticket médio.
+- **Sincronização PinPay:** teste de autenticação da chave secreta (`PINPAY_SECRET_KEY`) e registro automático da URL de webhook (`https://lojadenatal.pages.dev/api/webhook/pinpay`) diretamente na conta da PinPay.
+- **Simulador de Webhook:** disparo de eventos `payment_approved` de teste com cálculo dinâmico de assinatura HMAC-SHA256 para homologar a entrega sem precisar efetuar pagamentos reais.
+- **Reenvio de Acesso:** botão para reenviar os links do Google Drive para o email do cliente com um clique.
+- **Segurança:** protegido por senha via variável `ADMIN_PASSWORD` (senha padrão local: `natal2026admin`).
 
 ---
 
